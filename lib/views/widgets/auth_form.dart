@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
@@ -8,6 +9,7 @@ class AuthForm extends StatefulWidget {
 }
 
 class _AuthFormState extends State<AuthForm> {
+  final auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
@@ -120,6 +122,57 @@ class _AuthFormState extends State<AuthForm> {
       print('email : $email');
       print('password : $password');
       if (!isLogin) print('user name : $userName');
+      submitAuth(
+        email: email,
+        password: password,
+        username: userName,
+        isLogIn: isLogin,
+        context: context,
+      );
+    }
+  }
+
+  void submitAuth({
+    required String email,
+    required String password,
+    required String username,
+    required bool isLogIn,
+    required BuildContext context,
+  }) async {
+    try {
+      UserCredential userCredential;
+      if (isLogin) {
+        userCredential = await auth.signInWithEmailAndPassword(
+          email: email.trim(),
+          password: password.trim(),
+        );
+        print('LogIn UserCredential : $userCredential');
+      } else {
+        userCredential = await auth.createUserWithEmailAndPassword(
+          email: email.trim(),
+          password: password.trim(),
+        );
+        print('SignUp UserCredential : $userCredential');
+      }
+    } on FirebaseAuthException catch (e) {
+      String messege = 'An error Occurred';
+      if (e.code == 'weak-password') {
+        messege = 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        messege = 'The account already exists for that email.';
+      } else if (e.code == 'user-not-found') {
+        messege = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        messege = 'Wrong password provided for that user.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(messege),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    } catch (e) {
+      print(e);
     }
   }
 }
