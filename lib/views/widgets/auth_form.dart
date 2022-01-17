@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ class AuthForm extends StatefulWidget {
 }
 
 class _AuthFormState extends State<AuthForm> {
+  bool isLoading = false;
   final auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String email = '';
@@ -79,33 +81,37 @@ class _AuthFormState extends State<AuthForm> {
                       labelText: 'password',
                       labelStyle: TextStyle(fontSize: 20)),
                 ),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.pink),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ))),
-                  onPressed: submit,
-                  child: Text(
-                    isLogin ? 'Login' : 'Sign Up',
-                    style: const TextStyle(fontSize: 15),
+                const SizedBox(height: 17),
+                if (isLoading) const CircularProgressIndicator(),
+                if (!isLoading)
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.pink),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ))),
+                    onPressed: submit,
+                    child: Text(
+                      isLogin ? 'Login' : 'Sign Up',
+                      style: const TextStyle(fontSize: 15),
+                    ),
                   ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      isLogin = !isLogin;
-                    });
-                  },
-                  child: Text(
-                    isLogin
-                        ? 'Create new account'
-                        : 'I already have an account',
-                    style: const TextStyle(color: Colors.pink),
+                if (!isLoading)
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isLogin = !isLogin;
+                      });
+                    },
+                    child: Text(
+                      isLogin
+                          ? 'Create new account'
+                          : 'I already have an account',
+                      style: const TextStyle(color: Colors.pink),
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -140,6 +146,9 @@ class _AuthFormState extends State<AuthForm> {
     required BuildContext context,
   }) async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       UserCredential userCredential;
       if (isLogin) {
         userCredential = await auth.signInWithEmailAndPassword(
@@ -152,9 +161,19 @@ class _AuthFormState extends State<AuthForm> {
           email: email.trim(),
           password: password.trim(),
         );
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'username': username,
+          'password': password,
+        });
         print('SignUp UserCredential : $userCredential');
       }
     } on FirebaseAuthException catch (e) {
+      setState(() {
+        isLoading = false;
+      });
       String messege = 'An error Occurred';
       if (e.code == 'weak-password') {
         messege = 'The password provided is too weak.';
@@ -172,6 +191,9 @@ class _AuthFormState extends State<AuthForm> {
         ),
       );
     } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
       print(e);
     }
   }

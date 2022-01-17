@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatelessWidget {
@@ -15,6 +16,33 @@ class MyHomePage extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          DropdownButton(
+            underline: Container(),
+            icon: const Icon(
+              Icons.more_vert,
+              color: Colors.black,
+            ),
+            items: [
+              DropdownMenuItem<String>(
+                child: Row(
+                  children: const [
+                    Icon(
+                      Icons.logout,
+                      color: Colors.black,
+                    ),
+                    SizedBox(width: 10),
+                    Text('Logout'),
+                  ],
+                ),
+                value: 'Logout',
+              ),
+            ],
+            onChanged: (val) async {
+              if (val == 'Logout') await FirebaseAuth.instance.signOut();
+            },
+          )
+        ],
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
