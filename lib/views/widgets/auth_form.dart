@@ -131,7 +131,7 @@ class _AuthFormState extends State<AuthForm> {
       submitAuth(
         email: email,
         password: password,
-        username: userName,
+        userName: userName,
         isLogIn: isLogin,
         context: context,
       );
@@ -141,7 +141,7 @@ class _AuthFormState extends State<AuthForm> {
   void submitAuth({
     required String email,
     required String password,
-    required String username,
+    required String userName,
     required bool isLogIn,
     required BuildContext context,
   }) async {
@@ -165,8 +165,9 @@ class _AuthFormState extends State<AuthForm> {
             .collection('users')
             .doc(userCredential.user!.uid)
             .set({
-          'username': username,
+          'userName': userName,
           'password': password,
+          'email': email,
         });
         print('SignUp UserCredential : $userCredential');
       }
