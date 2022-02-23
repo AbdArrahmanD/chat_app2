@@ -3,9 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+// ignore: must_be_immutable
 class UserImagePicker extends StatefulWidget {
   File? pickedImage;
-  UserImagePicker(this.pickedImage, {Key? key}) : super(key: key);
+  UserImagePicker(
+    this.pickedImage, {
+    Key? key,
+  }) : super(key: key);
 
   @override
   _UserImagePickerState createState() => _UserImagePickerState();
