@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:chat_app2/views/widgets/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +20,8 @@ class _AuthFormState extends State<AuthForm> {
   String password = '';
   String userName = '';
   bool isLogin = true;
+  File? imagePicked;
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -30,6 +35,7 @@ class _AuthFormState extends State<AuthForm> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                UserImagePicker(imagePicked),
                 TextFormField(
                   key: const ValueKey('email'),
                   validator: (val) {
