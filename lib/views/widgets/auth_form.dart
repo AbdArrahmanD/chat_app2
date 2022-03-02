@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chat_app2/views/widgets/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
@@ -134,13 +135,23 @@ class _AuthFormState extends State<AuthForm> {
       print('email : $email');
       print('password : $password');
       if (!isLogin) print('user name : $userName');
-      submitAuth(
-        email: email,
-        password: password,
-        userName: userName,
-        isLogIn: isLogin,
-        context: context,
-      );
+      if (imagePicked != null) {
+        submitAuth(
+          email: email,
+          password: password,
+          userName: userName,
+          image: imagePicked!,
+          isLogIn: isLogin,
+          context: context,
+        );
+      } else {
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: const Text('Please Select A picture'),
+        //     backgroundColor: Theme.of(context).errorColor,
+        //   ),
+        // );
+      }
     }
   }
 
@@ -148,6 +159,7 @@ class _AuthFormState extends State<AuthForm> {
     required String email,
     required String password,
     required String userName,
+    required File image,
     required bool isLogIn,
     required BuildContext context,
   }) async {
@@ -167,6 +179,12 @@ class _AuthFormState extends State<AuthForm> {
           email: email.trim(),
           password: password.trim(),
         );
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('usersImage')
+            .child(userCredential.user!.uid + '.jpg');
+        await ref.putFile(imagePicked!);
+        final imageUrl = ref.getDownloadURL();
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userCredential.user!.uid)
@@ -174,6 +192,7 @@ class _AuthFormState extends State<AuthForm> {
           'userName': userName,
           'password': password,
           'email': email,
+          'image': imageUrl,
         });
         print('SignUp UserCredential : $userCredential');
       }
