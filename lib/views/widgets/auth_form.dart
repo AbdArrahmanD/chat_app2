@@ -145,12 +145,12 @@ class _AuthFormState extends State<AuthForm> {
           context: context,
         );
       } else {
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: const Text('Please Select A picture'),
-        //     backgroundColor: Theme.of(context).errorColor,
-        //   ),
-        // );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Please Select A picture'),
+            backgroundColor: Theme.of(context).errorColor,
+          ),
+        );
       }
     }
   }
