@@ -5,9 +5,9 @@ import 'package:image_picker/image_picker.dart';
 
 // ignore: must_be_immutable
 class UserImagePicker extends StatefulWidget {
-  File? pickedImage;
-  UserImagePicker(
-    this.pickedImage, {
+  final void Function(File? image) imageFun;
+  const UserImagePicker(
+    this.imageFun, {
     Key? key,
   }) : super(key: key);
 
@@ -16,13 +16,15 @@ class UserImagePicker extends StatefulWidget {
 }
 
 class _UserImagePickerState extends State<UserImagePicker> {
+  File? image;
   ImagePicker picker = ImagePicker();
   void chooseImage(ImageSource src) async {
     final pickedImageFile = await picker.pickImage(source: src);
     if (pickedImageFile != null) {
       setState(() {
-        widget.pickedImage = File(pickedImageFile.path);
+        image = File(pickedImageFile.path);
       });
+      widget.imageFun(image);
     } else {
       print('No Image selected');
     }
@@ -35,9 +37,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
       children: <Widget>[
         CircleAvatar(
           backgroundColor: Colors.blueGrey,
-          backgroundImage: widget.pickedImage != null
-              ? FileImage(widget.pickedImage!)
-              : null,
+          backgroundImage: image != null ? FileImage(image!) : null,
           radius: 50,
         ),
         const SizedBox(height: 15),

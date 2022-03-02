@@ -22,6 +22,9 @@ class _AuthFormState extends State<AuthForm> {
   String userName = '';
   bool isLogin = true;
   File? imagePicked;
+  void pickedImage(File? pickedImage) {
+    imagePicked = pickedImage;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +39,7 @@ class _AuthFormState extends State<AuthForm> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                UserImagePicker(imagePicked),
+                if (!isLogin) UserImagePicker(pickedImage),
                 TextFormField(
                   key: const ValueKey('email'),
                   validator: (val) {
@@ -135,6 +138,7 @@ class _AuthFormState extends State<AuthForm> {
       print('email : $email');
       print('password : $password');
       if (!isLogin) print('user name : $userName');
+      print('imagePicked : $imagePicked');
       if (imagePicked != null) {
         submitAuth(
           email: email,
@@ -159,7 +163,7 @@ class _AuthFormState extends State<AuthForm> {
     required String email,
     required String password,
     required String userName,
-    required File image,
+    required File? image,
     required bool isLogIn,
     required BuildContext context,
   }) async {
@@ -184,7 +188,7 @@ class _AuthFormState extends State<AuthForm> {
             .child('usersImage')
             .child(userCredential.user!.uid + '.jpg');
         await ref.putFile(imagePicked!);
-        final imageUrl = ref.getDownloadURL();
+        final imageUrl = await ref.getDownloadURL();
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userCredential.user!.uid)
