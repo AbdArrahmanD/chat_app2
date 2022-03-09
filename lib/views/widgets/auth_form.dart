@@ -139,22 +139,32 @@ class _AuthFormState extends State<AuthForm> {
       print('password : $password');
       if (!isLogin) print('user name : $userName');
       print('imagePicked : $imagePicked');
-      if (imagePicked != null) {
+      if (isLogin) {
         submitAuth(
           email: email,
           password: password,
           userName: userName,
-          image: imagePicked!,
           isLogIn: isLogin,
           context: context,
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Please Select A picture'),
-            backgroundColor: Theme.of(context).errorColor,
-          ),
-        );
+        if (imagePicked != null) {
+          submitAuth(
+            email: email,
+            password: password,
+            userName: userName,
+            image: imagePicked!,
+            isLogIn: isLogin,
+            context: context,
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Please Select A picture'),
+              backgroundColor: Theme.of(context).errorColor,
+            ),
+          );
+        }
       }
     }
   }
@@ -163,7 +173,7 @@ class _AuthFormState extends State<AuthForm> {
     required String email,
     required String password,
     required String userName,
-    required File? image,
+    File? image,
     required bool isLogIn,
     required BuildContext context,
   }) async {

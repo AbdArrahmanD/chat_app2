@@ -50,6 +50,7 @@ class _NewMessageState extends State<NewMessage> {
       'timeStamp': Timestamp.now(),
       'userName': userData['userName'],
       'userId': currentUser?.uid,
+      'image': userData['image'],
     });
     setState(() {
       enteredText = '';

@@ -4,8 +4,10 @@ class BubbleMessage extends StatelessWidget {
   final String userName;
   final String message;
   final bool isMe;
+  final String image;
 
   const BubbleMessage({
+    required this.image,
     required this.userName,
     required this.message,
     required this.isMe,
@@ -17,6 +19,12 @@ class BubbleMessage extends StatelessWidget {
     return Row(
       mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: <Widget>[
+        !isMe
+            ? CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(image),
+              )
+            : Container(),
         Container(
           decoration: BoxDecoration(
               color: isMe
@@ -51,7 +59,13 @@ class BubbleMessage extends StatelessWidget {
               ),
             ],
           ),
-        )
+        ),
+        isMe
+            ? CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(image),
+              )
+            : Container(),
       ],
     );
   }
