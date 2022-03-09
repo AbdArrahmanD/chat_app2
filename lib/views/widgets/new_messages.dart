@@ -21,7 +21,7 @@ class _NewMessageState extends State<NewMessage> {
         children: [
           Expanded(
             child: TextField(
-              decoration: const InputDecoration(labelText: 'Send a message...'),
+              decoration: const InputDecoration(hintText: 'Send a message...'),
               controller: controller,
               onChanged: (val) {
                 setState(() {
