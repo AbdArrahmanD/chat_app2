@@ -41,6 +41,9 @@ class _AuthFormState extends State<AuthForm> {
               children: [
                 if (!isLogin) UserImagePicker(pickedImage),
                 TextFormField(
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
+                  enableSuggestions: false,
                   key: const ValueKey('email'),
                   validator: (val) {
                     if (val!.isEmpty || !val.contains('@')) {
